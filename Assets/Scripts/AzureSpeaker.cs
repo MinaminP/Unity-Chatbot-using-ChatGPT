@@ -19,10 +19,9 @@ public class AzureSpeaker : MonoBehaviour
     //public bool UseNative;
     public AnimationHandler animHandler;
     public ChatUIManager CU;
+    public ClickHandler clickHandler;
 
     #region Microsoft Azure Native
-    private const string SubscriptionKey = "";
-    private const string Region = "";
     private const int SampleRate = 24000;
 
     private object threadLocker = new object();
@@ -51,8 +50,9 @@ public class AzureSpeaker : MonoBehaviour
                 Audio.Stop();
                 animHandler.SetAnimationTalking(false);
                 CU.EnableChatButtons(true);
-                Text = "";
+                //Text = "";
                 audioSourceNeedStop = false;
+                clickHandler.SetInputFocus(false);
             }
         }
     }
@@ -125,6 +125,7 @@ public class AzureSpeaker : MonoBehaviour
             CU.AppendAI(Text);
             animHandler.SetAnimationTalking(true);
             CU.loadingObject.SetActive(false);
+            clickHandler.SetInputFocus(true);
         }
 
         lock (threadLocker)
@@ -135,7 +136,7 @@ public class AzureSpeaker : MonoBehaviour
 
     public void MicrosoftSpeechSetup()
     {
-        speechConfig = SpeechConfig.FromSubscription(SubscriptionKey, Region);
+        speechConfig = SpeechConfig.FromSubscription(Credentials.SPEECH_API_KEY, Credentials.SPEECH_REGION);
 
         speechConfig.SpeechSynthesisVoiceName = "en-SG-LunaNeural";
         speechConfig.SetSpeechSynthesisOutputFormat(SpeechSynthesisOutputFormat.Raw24Khz16BitMonoPcm);

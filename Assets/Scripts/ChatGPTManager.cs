@@ -8,8 +8,8 @@ using UnityEngine.Networking;
 
 public class ChatGPTManager : MonoBehaviour
 {
-    private OpenAIApi openAI = new OpenAIApi("");
-    private List<ChatMessage> messages = new List<ChatMessage>();
+    private OpenAIApi openAI = new OpenAIApi(Credentials.OPENAI_API_KEY);
+    public List<ChatMessage> messages = new List<ChatMessage>();
     public InputField input;
 
     public string newText;
@@ -20,9 +20,9 @@ public class ChatGPTManager : MonoBehaviour
 
     public ClickHandler clickHandler;
 
-    private const string URL = "";
-
     public string initialPrompt;
+
+    public AnimationHandler animHandler;
 
     // Start is called before the first frame update
     void Start()
@@ -41,7 +41,7 @@ public class ChatGPTManager : MonoBehaviour
 
     IEnumerator GetPromptData()
     {
-        using (UnityWebRequest request = UnityWebRequest.Get(URL))
+        using (UnityWebRequest request = UnityWebRequest.Get(Credentials.URL))
         {
             yield return request.SendWebRequest();
 
@@ -51,7 +51,6 @@ public class ChatGPTManager : MonoBehaviour
             }
             else
             {
-                //Debug.Log(request.downloadHandler.text);
                 string json = request.downloadHandler.text;
                 SimpleJSON.JSONNode promptJS = SimpleJSON.JSON.Parse(json);
 
@@ -72,6 +71,8 @@ public class ChatGPTManager : MonoBehaviour
     public async void AskChatGPT()
     {
         if (input.text == "") return;
+
+        animHandler.SetAnimationListening(false);
 
         CU.loadingObject.SetActive(true);
 
@@ -103,6 +104,7 @@ public class ChatGPTManager : MonoBehaviour
 
             azureSpeaker.Text = chatResponse.Content;
             azureSpeaker.Speak();
+
         }
 
     }

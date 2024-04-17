@@ -51,6 +51,14 @@ public class ChatUIManager : MonoBehaviour
         scroll.verticalNormalizedPosition = 0;
     }
 
+    public void DeleteChat()
+    {
+        for (var i = scroll.content.transform.childCount; i-- > 0;)
+        {
+            Destroy(scroll.content.transform.GetChild(i).gameObject);
+        }
+    }
+
     public void EnableChatButtons(bool isEnabled)
     {
         sendButton.interactable = isEnabled;
